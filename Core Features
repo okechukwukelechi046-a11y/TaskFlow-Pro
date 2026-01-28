@@ -1,0 +1,15 @@
+Authentication: JWT-based auth with refresh tokens
+
+Authorization: Role-based access control (Admin, Manager, Member, Viewer)
+
+CRUD Operations: Tasks, projects, teams, comments, attachments
+
+Real-time Updates: Live task updates and notifications
+
+File Upload: Attach documents to tasks
+
+Search & Filter: Advanced task filtering and full-text search
+
+Activity Log: Complete audit trail
+
+Email Notifications: Daily digests and assignment alerts
