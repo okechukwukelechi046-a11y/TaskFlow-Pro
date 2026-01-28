@@ -1,0 +1,12 @@
+# Backend setup
+cd server
+npm install
+cp .env.example .env
+# Configure .env with your database credentials
+npx prisma migrate deploy
+npm run dev
+
+# Frontend setup (in separate terminal)
+cd client
+npm install
+npm start
