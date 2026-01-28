@@ -1,0 +1,9 @@
+# Run all tests
+cd server && npm test
+cd client && npm test
+
+# Run tests with coverage
+npm test -- --coverage
+
+# Run specific test file
+npm test -- TaskService.test.ts
