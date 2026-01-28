@@ -1,0 +1,90 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: taskflow_db
+    environment:
+      POSTGRES_DB: taskflow
+      POSTGRES_USER: taskflow_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - taskflow_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U taskflow_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: taskflow_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - taskflow_network
+    command: redis-server --appendonly yes
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: taskflow_server
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://taskflow_user:${DB_PASSWORD:-changeme}@postgres:5432/taskflow
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET:-changeme}
+      CLIENT_URL: http://localhost:3000
+    ports:
+      - "5000:5000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - taskflow_network
+    restart: unless-stopped
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: taskflow_client
+    environment:
+      REACT_APP_API_URL: http://localhost:5000/api/v1
+    ports:
+      - "3000:80"
+    depends_on:
+      - server
+    networks:
+      - taskflow_network
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: taskflow_proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/nginx/ssl:/etc/nginx/ssl
+    depends_on:
+      - client
+      - server
+    networks:
+      - taskflow_network
+
+volumes:
+  postgres_data:
+
+networks:
+  taskflow_network:
+    driver: bridge
