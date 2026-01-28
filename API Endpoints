@@ -1,0 +1,34 @@
+Authentication
+POST /api/v1/auth/register - Register new user
+
+POST /api/v1/auth/login - Login user
+
+POST /api/v1/auth/refresh - Refresh access token
+
+POST /api/v1/auth/logout - Logout user
+
+Tasks
+GET /api/v1/tasks - Get all tasks (with filters)
+
+POST /api/v1/tasks - Create new task
+
+GET /api/v1/tasks/:id - Get task by ID
+
+PUT /api/v1/tasks/:id - Update task
+
+DELETE /api/v1/tasks/:id - Delete task
+
+PATCH /api/v1/tasks/:id/status - Update task status
+
+Projects
+GET /api/v1/projects - Get all projects
+
+POST /api/v1/projects - Create new project
+
+GET /api/v1/projects/:id - Get project by ID
+
+PUT /api/v1/projects/:id - Update project
+
+DELETE /api/v1/projects/:id - Delete project
+
+GET /api/v1/projects/:id/tasks - Get project tasks
