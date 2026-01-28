@@ -1,0 +1,11 @@
+Frontend: TypeScript, React 18, Redux Toolkit, Tailwind CSS
+
+Backend: Node.js, Express.js, TypeScript
+
+Database: PostgreSQL with Prisma ORM
+
+Authentication: JWT with refresh tokens
+
+Real-time: Socket.io for live updates
+
+Tools: Docker, Docker Compose, GitHub Actions, ESLint, Prettier
