@@ -1,0 +1,3 @@
+Client (React SPA) ↔ Express API Gateway ↔ Business Logic Layer ↔ Data Access Layer ↔ PostgreSQL
+         ↑                               ↖                     ↗
+         └─────────── Socket.io ──────────┘
