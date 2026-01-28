@@ -1,0 +1,158 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int       @id @default(autoincrement())
+  email         String    @unique
+  username      String    @unique
+  passwordHash  String
+  firstName     String
+  lastName      String
+  role          Role      @default(MEMBER)
+  isActive      Boolean   @default(true)
+  lastLogin     DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  createdTasks  Task[]
+  assignedTasks Task[]    @relation("TaskAssignee")
+  projects      Project[]
+  teams         Team[]
+  comments      Comment[]
+  activities    Activity[]
+
+  @@index([email])
+  @@index([username])
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  MEMBER
+  VIEWER
+}
+
+model Project {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String?
+  code        String    @unique
+  status      ProjectStatus @default(ACTIVE)
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  ownerId     Int
+  owner       User      @relation(fields: [ownerId], references: [id])
+  tasks       Task[]
+  team        Team?
+
+  @@index([code])
+  @@index([status])
+}
+
+enum ProjectStatus {
+  ACTIVE
+  ON_HOLD
+  COMPLETED
+  CANCELLED
+}
+
+model Task {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String?
+  status      TaskStatus @default(TODO)
+  priority    Priority  @default(MEDIUM)
+  dueDate     DateTime?
+  estimate    Int?      // in hours
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  projectId   Int
+  project     Project   @relation(fields: [projectId], references: [id])
+  createdById Int
+  createdBy   User      @relation(fields: [createdById], references: [id], name: "TaskCreator")
+  assigneeId  Int?
+  assignee    User?     @relation(fields: [assigneeId], references: [id], name: "TaskAssignee")
+  
+  comments    Comment[]
+  attachments Attachment[]
+  activities  Activity[]
+
+  @@index([projectId])
+  @@index([status])
+  @@index([priority])
+  @@index([assigneeId])
+  @@fulltext([title, description])
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  REVIEW
+  DONE
+  BLOCKED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+
+  taskId    Int
+  task      Task     @relation(fields: [taskId], references: [id])
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([taskId])
+}
+
+model Attachment {
+  id          Int      @id @default(autoincrement())
+  filename    String
+  filepath    String
+  mimeType    String
+  size        Int
+  uploadedAt  DateTime @default(now())
+
+  taskId      Int
+  task        Task     @relation(fields: [taskId], references: [id])
+  uploadedById Int
+  uploadedBy  User     @relation(fields: [uploadedById], references: [id])
+
+  @@index([taskId])
+}
+
+model Activity {
+  id        Int        @id @default(autoincrement())
+  action    String
+  details   Json?
+  createdAt DateTime   @default(now())
+
+  userId    Int
+  user      User       @relation(fields: [userId], references: [id])
+  taskId    Int?
+  task      Task?      @relation(fields: [taskId], references: [id])
+  projectId Int?
+  project   Project?   @relation(fields: [projectId], references: [id])
+
+  @@index([userId])
+  @@index([taskId])
+  @@index([projectId])
+  @@index([createdAt])
+}
