@@ -1,0 +1,9 @@
+User authenticates via JWT
+
+Requests pass through middleware for validation and auth
+
+Controllers handle business logic
+
+Services interact with database via repositories
+
+Responses are formatted and returned
