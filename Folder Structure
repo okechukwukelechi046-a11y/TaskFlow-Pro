@@ -1,0 +1,24 @@
+taskflow-pro/
+├── client/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── common/
+│   │   │   ├── dashboard/
+│   │   │   └── tasks/
+│   │   ├── hooks/
+│   │   ├── store/
+│   │   ├── utils/
+│   │   └── types/
+├── server/
+│   ├── src/
+│   │   ├── config/
+│   │   ├── middleware/
+│   │   ├── controllers/
+│   │   ├── services/
+│   │   ├── repositories/
+│   │   ├── models/
+│   │   ├── utils/
+│   │   └── types/
+├── docker/
+├── .github/workflows/
+└── docker-compose.yml
